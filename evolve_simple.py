@@ -9,25 +9,12 @@ from painting import Painting
 
 
 def score(x: Painting) -> float:
-    """
-    Calculate the distance to the target image
-
-    :param x: a Painting object to calculate the distance for
-    :return: distance based on pixel differences
-    """
     current_score = x.image_diff(x.target_image)
     print(".", end='', flush=True)
     return current_score
 
 
 def pick_best_and_random(pop, maximize=False):
-    """
-    Here we select the best individual from a population and pair it with a random individual from a population
-
-    :param pop: input population
-    :param maximize: when true a higher fitness score is better, otherwise a lower score is considered better
-    :return: a tuple with the best and a random individual
-    """
     evaluated_individuals = tuple(filter(lambda x: x.fitness is not None, pop))
     if len(evaluated_individuals) > 0:
         mom = max(evaluated_individuals, key=lambda x: x.fitness if maximize else -x.fitness)
@@ -38,42 +25,17 @@ def pick_best_and_random(pop, maximize=False):
 
 
 def mutate_painting(x: Painting, rate=0.04, swap=0.5, sigma=1) -> Painting:
-    """
-    This will mutate a painting by randomly applying changes to the triangles.
-
-    :param x: Painting to mutate
-    :param rate: the chance a triangle will be mutated
-    :param swap: the chance a pair of traingles will be swapped
-    :param sigma: the strenght of the mutation (how much a triangle can be changed)
-    :return: New painting object with mutations
-    """
     x.mutate_triangles(rate=rate, swap=swap, sigma=sigma)
     return deepcopy(x)
 
 
 def mate(mom: Painting, dad: Painting):
-    """
-    Takes two paintings, the mom and dad, to create a new painting object made up with triangles from both parents
-
-    :param mom: One parent painting
-    :param dad: Other parent painting
-    :return: new Painting with features from both parents
-    """
     child_a, child_b = Painting.mate(mom, dad)
 
     return deepcopy(child_a)
 
 
 def print_summary(pop, img_template="output%d.png", checkpoint_path="output") -> Population:
-    """
-    This will print a summary of the population fitness and store an image of the best individual of the current
-    generation. Every fifty generations the entire population is stored.
-
-    :param pop: Population
-    :param img_template: a template for the name of the output images, should contain %d as the number of the generation is included
-    :param checkpoint_path: directory to write output.
-    :return: The input population
-    """
     avg_fitness = sum([i.fitness for i in pop.individuals])/len(pop.individuals)
 
     print("\nCurrent generation %d, best score %f, pop. avg. %f " % (pop.generation,
